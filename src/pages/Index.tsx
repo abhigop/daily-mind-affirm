@@ -2,7 +2,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/context/UserContext";
-import { supabase } from "@/lib/supabase";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -13,8 +12,10 @@ const Index = () => {
     if (!isLoading) {
       if (isAuthenticated) {
         if (userData.onboardingComplete) {
+          // Redirect to home page if onboarding is complete
           navigate("/home");
         } else {
+          // Redirect to onboarding flow if not complete
           navigate("/onboarding/referral");
         }
       } else {

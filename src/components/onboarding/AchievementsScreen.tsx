@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/context/UserContext';
 import { Check } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 
 const achievements = [
   { id: 'positive-mindset', label: 'Develop a positive mindset' },
@@ -18,6 +19,7 @@ const achievements = [
 const AchievementsScreen = () => {
   const navigate = useNavigate();
   const { updateUserData } = useUser();
+  const { toast } = useToast();
   const [selectedAchievements, setSelectedAchievements] = useState<string[]>([]);
 
   const toggleAchievement = (achievementId: string) => {
@@ -30,10 +32,19 @@ const AchievementsScreen = () => {
 
   const handleComplete = () => {
     if (selectedAchievements.length > 0) {
+      // Update user data and mark onboarding as complete
       updateUserData({ 
         achievements: selectedAchievements,
         onboardingComplete: true 
       });
+      
+      // Show toast notification
+      toast({
+        title: "Onboarding complete!",
+        description: "Enjoy your personalized affirmations",
+      });
+      
+      // Redirect to home page
       navigate('/home');
     }
   };
