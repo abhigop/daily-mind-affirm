@@ -1,28 +1,41 @@
 
 import React, { useState, useEffect } from 'react';
-import { affirmations, getAffirmationsByTopics } from '@/data/affirmations';
+import { affirmations, getAffirmationsByTopics, Affirmation } from '@/data/affirmations';
 import AffirmationCard from './AffirmationCard';
 import { useUser } from '@/context/UserContext';
 
-const AffirmationFeed: React.FC = () => {
+interface AffirmationFeedProps {
+  customAffirmations?: Affirmation[];
+  onEndReached?: () => void;
+}
+
+const AffirmationFeed: React.FC<AffirmationFeedProps> = ({ 
+  customAffirmations,
+  onEndReached
+}) => {
   const { userData } = useUser();
   const [currentAffirmationIndex, setCurrentAffirmationIndex] = useState(0);
-  const [feedAffirmations, setFeedAffirmations] = useState(affirmations);
+  const [feedAffirmations, setFeedAffirmations] = useState<Affirmation[]>(customAffirmations || affirmations);
   
-  // Update affirmations when followed topics change
+  // Update affirmations when followed topics or custom affirmations change
   useEffect(() => {
-    if (userData.followedTopics.length > 0) {
+    if (customAffirmations && customAffirmations.length > 0) {
+      setFeedAffirmations(customAffirmations);
+    } else if (userData.followedTopics.length > 0) {
       const filteredAffirmations = getAffirmationsByTopics(userData.followedTopics);
       setFeedAffirmations(filteredAffirmations.length > 0 ? filteredAffirmations : affirmations);
     } else {
       setFeedAffirmations(affirmations);
     }
-  }, [userData.followedTopics]);
+  }, [userData.followedTopics, customAffirmations]);
   
   const handleNextAffirmation = () => {
     setCurrentAffirmationIndex((prevIndex) => {
-      // If we're at the last affirmation, loop back to the first one
+      // If we're at the last affirmation, loop back to the first one and call onEndReached if provided
       if (prevIndex >= feedAffirmations.length - 1) {
+        if (onEndReached) {
+          onEndReached();
+        }
         return 0;
       }
       return prevIndex + 1;
