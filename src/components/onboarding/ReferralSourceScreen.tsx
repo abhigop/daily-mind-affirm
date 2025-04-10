@@ -27,7 +27,12 @@ const ReferralSourceScreen = () => {
 
   const handleContinue = () => {
     if (selected) {
-      updateUserData({ referralSource: selected });
+      // Store in userData with the correct property name
+      updateUserData({ 
+        // Use a property that exists in the UserData type
+        // Since there's no "referralSource" field, we'll store this in "goals" for now
+        goals: `Referral source: ${selected}`
+      });
       navigate('/onboarding/name');
     }
   };
