@@ -19,7 +19,7 @@ const Index = () => {
         }
       } else {
         // Not authenticated, go to welcome screen
-        navigate("/");
+        navigate("/welcome");
       }
     }
   }, [navigate, isAuthenticated, userData, isLoading]);
